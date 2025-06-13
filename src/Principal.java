@@ -1,12 +1,14 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Principal {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Scanner scan = new Scanner(System.in);
-        String cep = "";
 
-        try {
+        try (Scanner scan = new Scanner(System.in)) {
+            String cep = "";
             while (!cep.equalsIgnoreCase("sair")) {
 
                 System.out.print("Informe seu CEP: ");
@@ -17,8 +19,12 @@ public class Principal {
                 }
 
                 try {
+                    Gson json = new GsonBuilder()
+                            .setPrettyPrinting()
+                            .create();
+
                     BuscaCep cep1 = new BuscaCep();
-                    System.out.println(cep1.buscarCep(cep));
+                    System.out.println(json.toJson(cep1.buscarCep(cep)));
                     GeradorDeArquivo novoEndereco = new GeradorDeArquivo();
                     novoEndereco.gerar(cep1.buscarCep(cep));
 
@@ -28,9 +34,8 @@ public class Principal {
 
                 }
             }
-        }finally {
-                scan.close();
-                System.out.println("Finalizando a Aplicação.");
+        } finally {
+            System.out.println("Finalizando a Aplicação.");
         }
     }
 }
